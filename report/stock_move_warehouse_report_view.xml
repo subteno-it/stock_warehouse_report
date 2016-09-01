@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        ##############################################################################
+        #
+        #    stock_warehouse_report module for OpenERP, Stock Statistics per Warehouse
+        #    Copyright (C) 2015 SYLEAM Info Services ([http://www.Syleam.fr/])
+        #              Alexandre MOREAU [alexandre.moreau@syleam.fr]
+        #              Sylvain Garancher [sylvain.garancher@syleam.fr]
+        #              Sebastien LANGE [sebastien.lange@syleam.fr]
+        #
+        #    This file is a part of stock_warehouse_report
+        #
+        #    stock_warehouse_report is free software: you can redistribute it and/or modify
+        #    it under the terms of the GNU Affero General Public License as published by
+        #    the Free Software Foundation, either version 3 of the License, or
+        #    (at your option) any later version.
+        #
+        #    stock_warehouse_report is distributed in the hope that it will be useful,
+        #    but WITHOUT ANY WARRANTY; without even the implied warranty of
+        #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        #    GNU Affero General Public License for more details.
+        #
+        #    You should have received a copy of the GNU Affero General Public License
+        #    along with this program.  If not, see [http://www.gnu.org/licenses/].
+        #
+        ##############################################################################
+
+        <record id="view_stock_move_warehouse_report_graph" model="ir.ui.view">
+            <field name="name">stock.move.warehouse.report.graph</field>
+            <field name="model">stock.move.warehouse.report</field>
+            <field name="arch" type="xml">
+                <graph string="Stock Analysis" type="pivot">
+                    <field name="product_id" type="row"/>
+                    <field name="date" type="col"/>
+                    <field name="total" type="measure"/>
+                </graph>
+            </field>
+        </record>
+        <record id="view_stock_move_warehouse_report_pivot" model="ir.ui.view">
+            <field name="name">stock.move.warehouse.report.pivot</field>
+            <field name="model">stock.move.warehouse.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Stock Analysis" type="pivot">
+                    <field name="product_id" type="row"/>
+                    <field name="date" type="col"/>
+                    <field name="total" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+        <record id="view_stock_move_warehouse_report_search" model="ir.ui.view">
+            <field name="name">stock.move.warehouse.report.search</field>
+            <field name="model">stock.move.warehouse.report</field>
+            <field name="arch" type="xml">
+                <search string="Stock Analysis">
+                    <field name="date"/>
+                    <field name="categ_id"/>
+                    <field name="warehouse_id"/>
+                    <field name="product_id"/>
+                    <filter string='Negative stock' domain="[ ('total', '&lt;', 0)]"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Product" context="{'group_by':'product_id'}"/>
+                        <filter string="Date" context="{'group_by':'date'}"/>
+                        <separator orientation="vertical" />
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="action_stock_move_warehouse_report_all" model="ir.actions.act_window">
+            <field name="name">Stock Analysis</field>
+            <field name="res_model">stock.move.warehouse.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot, graph</field>
+            <field name="search_view_id" ref="view_stock_move_warehouse_report_search"/>
+        </record>
+        <menuitem action="action_stock_move_warehouse_report_all" id="menu_action_stock_move_warehouse_report_all" parent="stock.menu_warehouse_report" sequence="0"/>
+    </data>
+</openerp>

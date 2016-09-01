@@ -1,0 +1,164 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* stock_warehouse_report
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 9.0e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-09-01 19:50+0000\n"
+"PO-Revision-Date: 2016-09-01 19:50+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_move_warehouse_report_categ_id
+msgid "Category"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,help:stock_warehouse_report.field_stock_move_warehouse_report_categ_id
+msgid "Category for this move"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_move_warehouse_report_create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_move_warehouse_report_create_date
+msgid "Created on"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,help:stock_warehouse_report.field_stock_move_warehouse_report_uom_id
+msgid "Current unit of measure"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_move_warehouse_report_date
+#: model:ir.ui.view,arch_db:stock_warehouse_report.view_stock_move_warehouse_report_search
+msgid "Date"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,help:stock_warehouse_report.field_stock_move_warehouse_report_date
+msgid "Date for this move"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_move_warehouse_report_display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.ui.view,arch_db:stock_warehouse_report.view_stock_move_warehouse_report_search
+msgid "Group By"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_move_warehouse_report_id
+msgid "ID"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_move_warehouse_report___last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_move_warehouse_report_write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_move_warehouse_report_write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model,name:stock_warehouse_report.model_stock_location
+msgid "Location"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.ui.view,arch_db:stock_warehouse_report.view_stock_move_warehouse_report_search
+msgid "Negative stock"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_move_warehouse_report_product_id
+#: model:ir.ui.view,arch_db:stock_warehouse_report.view_stock_move_warehouse_report_search
+msgid "Product"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,help:stock_warehouse_report.field_stock_move_warehouse_report_product_id
+msgid "Product move"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,help:stock_warehouse_report.field_stock_move_warehouse_report_product_qty
+msgid "Qty signed (+ in and - out)"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_move_warehouse_report_product_qty
+msgid "Quantity"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.actions.act_window,name:stock_warehouse_report.action_stock_move_warehouse_report_all
+#: model:ir.ui.menu,name:stock_warehouse_report.menu_action_stock_move_warehouse_report_all
+#: model:ir.ui.view,arch_db:stock_warehouse_report.view_stock_move_warehouse_report_graph
+#: model:ir.ui.view,arch_db:stock_warehouse_report.view_stock_move_warehouse_report_pivot
+#: model:ir.ui.view,arch_db:stock_warehouse_report.view_stock_move_warehouse_report_search
+msgid "Stock Analysis"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model,name:stock_warehouse_report.model_stock_move_warehouse_report
+msgid "Stock Statistics"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,help:stock_warehouse_report.field_stock_move_warehouse_report_total
+msgid "Stock at this date"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_move_warehouse_report_total
+msgid "Total"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_move_warehouse_report_uom_id
+msgid "Unit of measure"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_location_warehouse_id
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_move_warehouse_report_warehouse_id
+msgid "Warehouse"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,help:stock_warehouse_report.field_stock_move_warehouse_report_warehouse_id
+msgid "Warehouse impact by this move"
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,help:stock_warehouse_report.field_stock_location_warehouse_id
+msgid "Warehouse where this location is located."
+msgstr ""
+
+#. module: stock_warehouse_report
+#: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_location_warehouse_ids
+msgid "Warehouses"
+msgstr ""
+

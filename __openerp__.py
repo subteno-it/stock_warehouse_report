@@ -29,9 +29,14 @@
     'description': """Stock Statistics per Warehouse""",
     'author': 'SYLEAM',
     'website': 'http://www.syleam.fr/',
-    'depends': [],
+    'depends': [
+        'base',
+        'stock',
+    ],
     'images': [],
     'data': [
+        'report/stock_move_warehouse_report_view.xml',
+        'data/ir_cron_data.xml',
     ],
     'installable': True,
     'license': 'AGPL-3',
