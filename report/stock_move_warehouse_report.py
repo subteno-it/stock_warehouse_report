@@ -188,6 +188,7 @@ class stock_move_warehouse_report(models.Model):
 
     @api.model
     def update_report(self):
+        self.env.cr.execute("""TRUNCATE TABLE stock_move_warehouse_report""")
         self.env.cr.execute("""
                    INSERT INTO stock_move_warehouse_report
                        (create_date,
