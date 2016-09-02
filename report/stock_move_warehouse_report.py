@@ -38,11 +38,49 @@ class stock_move_warehouse_report(models.Model):
 
     categ_id = fields.Many2one(comodel_name='product.category', string='Category', help='Category for this move')
     product_id = fields.Many2one(comodel_name='product.product', string='Product', help='Product move')
-    total = fields.Float(digits_compute=dp.get_precision('Product Unit of Measure'), help='Stock at this date')
-    product_qty = fields.Float(string='Quantity', digits_compute=dp.get_precision('Product Unit of Measure'), help='Qty signed (+ in and - out)')
+    in_out_qty = fields.Float(string='Incoming/Outgoing', digits_compute=dp.get_precision('Product Unit of Measure'), help='Qty signed (+ in and - out)')
     uom_id = fields.Many2one(comodel_name='product.uom', string='Unit of measure', help='Current unit of measure')
     warehouse_id = fields.Many2one(comodel_name='stock.warehouse', string='Warehouse', help='Warehouse impact by this move')
     date = fields.Datetime(help='Date for this move')
+    qty_available = fields.Float(string='Quantity On Hand', digits_compute=dp.get_precision('Product Unit of Measure'),
+                                 help="Current quantity of products.\n"
+                                 "In a context with a single Stock Location, this includes "
+                                 "goods stored at this Location, or any of its children.\n"
+                                 "In a context with a single Warehouse, this includes "
+                                 "goods stored in the Stock Location of this Warehouse, or any "
+                                 "of its children.\n"
+                                 "stored in the Stock Location of the Warehouse of this Shop, "
+                                 "or any of its children.\n"
+                                 "Otherwise, this includes goods stored in any Stock Location "
+                                 "with 'internal' type.")
+    virtual_available = fields.Float(string='Forecast Quantity', digits_compute=dp.get_precision('Product Unit of Measure'),
+                                     help="Forecast quantity (computed as Quantity On Hand "
+                                     "- Outgoing + Incoming)\n"
+                                     "In a context with a single Stock Location, this includes "
+                                     "goods stored in this location, or any of its children.\n"
+                                     "In a context with a single Warehouse, this includes "
+                                     "goods stored in the Stock Location of this Warehouse, or any "
+                                     "of its children.\n"
+                                     "Otherwise, this includes goods stored in any Stock Location "
+                                     "with 'internal' type.")
+    incoming_qty = fields.Float(string='Incoming', digits_compute=dp.get_precision('Product Unit of Measure'),
+                                help="Quantity of products that are planned to arrive.\n"
+                                "In a context with a single Stock Location, this includes "
+                                "goods arriving to this Location, or any of its children.\n"
+                                "In a context with a single Warehouse, this includes "
+                                "goods arriving to the Stock Location of this Warehouse, or "
+                                "any of its children.\n"
+                                "Otherwise, this includes goods arriving to any Stock "
+                                "Location with 'internal' type.")
+    outgoing_qty = fields.Float(string='Outgoing', digits_compute=dp.get_precision('Product Unit of Measue'),
+                                help="Quantity of products that are planned to leave.\n"
+                                "In a context with a single Stock Location, this includes "
+                                "goods leaving this Location, or any of its children.\n"
+                                "In a context with a single Warehouse, this includes "
+                                "goods leaving the Stock Location of this Warehouse, or "
+                                "any of its children.\n"
+                                "Otherwise, this includes goods leaving any Stock "
+                                "Location with 'internal' type.")
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, 'stock_move_warehouse')
@@ -59,7 +97,9 @@ class stock_move_warehouse_report(models.Model):
                     product_id,
                     stock_move.product_uom AS uom_id,
                     date_expected AS date,
-                    product_qty * -1 AS product_qty,
+                    0 AS incoming_qty,
+                    product_qty AS outgoing_qty,
+                    product_qty * -1 AS in_out_qty,
                     (
                         SELECT warehouse_id
                         FROM stock_location
@@ -80,7 +120,9 @@ class stock_move_warehouse_report(models.Model):
                     product_id,
                     stock_move.product_uom AS uom_id,
                     date_expected AS date,
-                    product_qty AS product_qty,
+                    product_qty AS incoming_qty,
+                    0 AS outgoing_qty,
+                    product_qty AS in_out_qty,
                     (
                         SELECT warehouse_id
                         FROM stock_location
@@ -99,7 +141,17 @@ class stock_move_warehouse_report(models.Model):
                     smw.categ_id,
                     smw.uom_id,
                     (
-                        SELECT SUM(smw2.product_qty)
+                        COALESCE((
+                            SELECT SUM(qty)
+                            FROM stock_quant sq
+                            INNER JOIN stock_location sl ON sl.id = sq.location_id AND sl.warehouse_id=smw.warehouse_id
+                            WHERE (SELECT usage FROM stock_location WHERE id = sq.location_id) = 'internal'
+                                AND sq.product_id = smw.product_id
+                            GROUP BY product_id, sq.location_id
+                        ), 0)
+                    ) AS qty_available,
+                    (
+                        SELECT SUM(smw2.in_out_qty)
                         FROM stock_move_warehouse smw2
                         WHERE smw2.warehouse_id = smw.warehouse_id
                             AND smw2.product_id = smw.product_id
@@ -113,12 +165,14 @@ class stock_move_warehouse_report(models.Model):
                                 AND sq.product_id = smw.product_id
                             GROUP BY product_id, sq.location_id
                         ), 0)
-                    ) AS total,
-                    SUM(smw.product_qty) AS product_qty,
+                    ) AS virtual_available,
+                    SUM(smw.incoming_qty) AS incoming_qty,
+                    SUM(smw.outgoing_qty) AS outgoing_qty,
+                    SUM(smw.in_out_qty) AS in_out_qty,
                     smw.date,
                     smw.warehouse_id
                 FROM stock_move_warehouse smw
-                GROUP BY product_id, uom_id, warehouse_id, date, total, categ_id
+                GROUP BY product_id, uom_id, warehouse_id, date, virtual_available, qty_available, categ_id
             """)
 
     @api.model
@@ -139,8 +193,11 @@ class stock_move_warehouse_report(models.Model):
                        create_uid,
                        categ_id,
                        product_id,
-                       total,
-                       product_qty,
+                       qty_available,
+                       virtual_available,
+                       incoming_qty,
+                       outgoing_qty,
+                       in_out_qty,
                        uom_id,
                        warehouse_id,
                        date)
@@ -149,8 +206,11 @@ class stock_move_warehouse_report(models.Model):
                        1 AS create_uid,
                        categ_id,
                        product_id,
-                       total,
-                       product_qty,
+                       qty_available,
+                       virtual_available,
+                       incoming_qty,
+                       outgoing_qty,
+                       in_out_qty,
                        uom_id,
                        warehouse_id,
                        date

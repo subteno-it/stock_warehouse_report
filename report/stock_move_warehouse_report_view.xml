@@ -33,7 +33,7 @@
                 <graph string="Stock Analysis" type="pivot">
                     <field name="product_id" type="row"/>
                     <field name="date" type="col"/>
-                    <field name="total" type="measure"/>
+                    <field name="virtual_available" type="measure"/>
                 </graph>
             </field>
         </record>
@@ -44,7 +44,7 @@
                 <pivot string="Stock Analysis" type="pivot">
                     <field name="product_id" type="row"/>
                     <field name="date" type="col"/>
-                    <field name="total" type="measure"/>
+                    <field name="virtual_available" type="measure"/>
                 </pivot>
             </field>
         </record>
@@ -57,7 +57,7 @@
                     <field name="categ_id"/>
                     <field name="warehouse_id"/>
                     <field name="product_id"/>
-                    <filter string='Negative stock' domain="[ ('total', '&lt;', 0)]"/>
+                    <filter string='Negative stock' domain="[ ('virtual_available', '&lt;', 0)]"/>
                     <group expand="1" string="Group By">
                         <filter string="Product" context="{'group_by':'product_id'}"/>
                         <filter string="Date" context="{'group_by':'date'}"/>
