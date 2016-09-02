@@ -102,8 +102,8 @@ msgstr "Entrants"
 
 #. module: stock_warehouse_report
 #: model:ir.model.fields,field_description:stock_warehouse_report.field_stock_move_warehouse_report_in_out_qty
-msgid "Incoming/Outgoing"
-msgstr "Entrants/Sortants"
+msgid "Incoming - Outgoing"
+msgstr "Entrants - Sortants"
 
 #. module: stock_warehouse_report
 #: model:ir.model,name:stock_warehouse_report.model_stock_location

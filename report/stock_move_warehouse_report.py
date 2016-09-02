@@ -38,7 +38,7 @@ class stock_move_warehouse_report(models.Model):
 
     categ_id = fields.Many2one(comodel_name='product.category', string='Category', help='Category for this move')
     product_id = fields.Many2one(comodel_name='product.product', string='Product', help='Product move')
-    in_out_qty = fields.Float(string='Incoming/Outgoing', digits_compute=dp.get_precision('Product Unit of Measure'), help='Qty signed (+ in and - out)')
+    in_out_qty = fields.Float(string='Incoming - Outgoing', digits_compute=dp.get_precision('Product Unit of Measure'))
     uom_id = fields.Many2one(comodel_name='product.uom', string='Unit of measure', help='Current unit of measure')
     warehouse_id = fields.Many2one(comodel_name='stock.warehouse', string='Warehouse', help='Warehouse impact by this move')
     date = fields.Datetime(help='Date for this move')
@@ -155,7 +155,6 @@ class stock_move_warehouse_report(models.Model):
                         FROM stock_move_warehouse smw2
                         WHERE smw2.warehouse_id = smw.warehouse_id
                             AND smw2.product_id = smw.product_id
-                            AND smw2.date <= smw.date
                     ) + (
                         COALESCE((
                             SELECT SUM(qty)
@@ -180,8 +179,10 @@ class stock_move_warehouse_report(models.Model):
         res = super(stock_move_warehouse_report, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
 
         for index in range(len(res)):
-            if res[index]['__count'] > 1 and 'total' in res[index] and '__domain' in res[index]:
-                res[index]['total'] = self.search(res[index]['__domain'], order='total ASC', limit=1).total
+            if res[index]['__count'] > 1 and 'qty_available' in res[index] and '__domain' in res[index]:
+                res[index]['qty_available'] = self.search(res[index]['__domain'], order='qty_available ASC', limit=1).qty_available
+            if res[index]['__count'] > 1 and 'virtual_available' in res[index] and '__domain' in res[index]:
+                res[index]['virtual_available'] = self.search(res[index]['__domain'], order='virtual_available ASC', limit=1).virtual_available
 
         return res
 
