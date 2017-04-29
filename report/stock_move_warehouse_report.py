@@ -1,33 +1,10 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-#
-#    stock_warehouse_report module for OpenERP, Stock Statistics per Warehouse
-#    Copyright (C) 2015 SYLEAM Info Services (<http://www.Syleam.fr/>)
-#              Alexandre MOREAU <alexandre.moreau@syleam.fr>
-#              Sylvain Garancher <sylvain.garancher@syleam.fr>
-#    Copyright (C) 2016 SYLEAM Info Services (<http://www.syleam.fr>)
-#              Sebastien LANGE <sebastien.lange@syleam.fr>
-#
-#    This file is a part of stock_warehouse_report
-#
-#    stock_warehouse_report is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    stock_warehouse_report is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
-#
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-##############################################################################
+# Copyright 2016 SYLEAM Info Services
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from openerp import tools
-from openerp import models, fields, api
-from openerp.addons import decimal_precision as dp
+from odoo import tools
+from odoo import models, fields, api
+from odoo.addons import decimal_precision as dp
 
 
 class stock_move_warehouse_report(models.Model):
@@ -38,11 +15,11 @@ class stock_move_warehouse_report(models.Model):
 
     categ_id = fields.Many2one(comodel_name='product.category', string='Category', help='Category for this move')
     product_id = fields.Many2one(comodel_name='product.product', string='Product', help='Product move')
-    in_out_qty = fields.Float(string='Incoming - Outgoing', digits_compute=dp.get_precision('Product Unit of Measure'))
+    in_out_qty = fields.Float(string='Incoming - Outgoing', digits=dp.get_precision('Product Unit of Measure'))
     uom_id = fields.Many2one(comodel_name='product.uom', string='Unit of measure', help='Current unit of measure')
     warehouse_id = fields.Many2one(comodel_name='stock.warehouse', string='Warehouse', help='Warehouse impact by this move')
     date = fields.Datetime(help='Date for this move')
-    qty_available = fields.Float(string='Quantity On Hand', digits_compute=dp.get_precision('Product Unit of Measure'),
+    qty_available = fields.Float(string='Quantity On Hand', digits=dp.get_precision('Product Unit of Measure'),
                                  help="Current quantity of products.\n"
                                  "In a context with a single Stock Location, this includes "
                                  "goods stored at this Location, or any of its children.\n"
@@ -53,7 +30,7 @@ class stock_move_warehouse_report(models.Model):
                                  "or any of its children.\n"
                                  "Otherwise, this includes goods stored in any Stock Location "
                                  "with 'internal' type.")
-    virtual_available = fields.Float(string='Forecast Quantity', digits_compute=dp.get_precision('Product Unit of Measure'),
+    virtual_available = fields.Float(string='Forecast Quantity', digits=dp.get_precision('Product Unit of Measure'),
                                      help="Forecast quantity (computed as Quantity On Hand "
                                      "- Outgoing + Incoming)\n"
                                      "In a context with a single Stock Location, this includes "
@@ -63,7 +40,7 @@ class stock_move_warehouse_report(models.Model):
                                      "of its children.\n"
                                      "Otherwise, this includes goods stored in any Stock Location "
                                      "with 'internal' type.")
-    incoming_qty = fields.Float(string='Incoming', digits_compute=dp.get_precision('Product Unit of Measure'),
+    incoming_qty = fields.Float(string='Incoming', digits=dp.get_precision('Product Unit of Measure'),
                                 help="Quantity of products that are planned to arrive.\n"
                                 "In a context with a single Stock Location, this includes "
                                 "goods arriving to this Location, or any of its children.\n"
@@ -72,7 +49,7 @@ class stock_move_warehouse_report(models.Model):
                                 "any of its children.\n"
                                 "Otherwise, this includes goods arriving to any Stock "
                                 "Location with 'internal' type.")
-    outgoing_qty = fields.Float(string='Outgoing', digits_compute=dp.get_precision('Product Unit of Measue'),
+    outgoing_qty = fields.Float(string='Outgoing', digits=dp.get_precision('Product Unit of Measue'),
                                 help="Quantity of products that are planned to leave.\n"
                                 "In a context with a single Stock Location, this includes "
                                 "goods leaving this Location, or any of its children.\n"
@@ -82,10 +59,10 @@ class stock_move_warehouse_report(models.Model):
                                 "Otherwise, this includes goods leaving any Stock "
                                 "Location with 'internal' type.")
 
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, 'stock_move_warehouse')
-        tools.drop_view_if_exists(cr, 'stock_move_warehouse_view_report')
-        cr.execute("""
+    def init(self):
+        tools.drop_view_if_exists(self.env.cr, 'stock_move_warehouse')
+        tools.drop_view_if_exists(self.env.cr, 'stock_move_warehouse_view_report')
+        self.env.cr.execute("""
             CREATE OR REPLACE VIEW stock_move_warehouse AS
                 SELECT
                     (
@@ -133,7 +110,7 @@ class stock_move_warehouse_report(models.Model):
                     INNER JOIN stock_location sl ON sl.id = stock_move.location_dest_id AND sl.warehouse_id IS NOT NULL
                     WHERE stock_move.state NOT IN ('draft', 'done', 'cancel')
             """)
-        cr.execute("""
+        self.env.cr.execute("""
             CREATE OR REPLACE VIEW stock_move_warehouse_view_report AS
                 SELECT
                     MIN(smw.stock_move_id) AS id,
@@ -218,4 +195,3 @@ class stock_move_warehouse_report(models.Model):
                        date
                    FROM stock_move_warehouse_view_report""")
 
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
